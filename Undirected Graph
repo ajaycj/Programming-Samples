@@ -1,0 +1,84 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package graphs_java;
+/**
+ *
+ * @author Ajay C J
+ */
+
+import java.util.*;
+import java.io.*;
+import java.io.FileNotFoundException;
+
+class Neighbor{
+    public int vertexnum;
+    public Neighbor next;
+    public Neighbor(int vnum, Neighbor nbr){
+        this.vertexnum = vnum;
+    }
+}
+
+class Vertex{
+    String name;
+    Neighbor adjList;
+    Vertex(String name, Neighbor neighbors){
+        this.name = name;
+        this.adjList = neighbors;
+    }
+}
+
+public class Graphs_Java {
+
+    /**
+     * @param args the command line arguments
+     */
+    Vertex[] adjLists;
+    
+    public Graphs_Java(String file) throws FileNotFoundException{
+        Scanner sc = new Scanner (new File(file));
+        adjLists = new Vertex[sc.nextInt()];
+        for (int v = 0; v < adjLists.length; v++){
+            adjLists[v] = new Vertex(sc.next(), null);
+        }
+    
+    
+        while (sc.hasNext()){
+            int v1 = indexForName(sc.next());
+            int v2 = indexForName(sc.next());
+            adjLists[v1].adjList = new Neighbor(v2, adjLists[v2].adjList);
+            adjLists[v2].adjList = new Neighbor(v1, adjLists[v1].adjList);
+        }
+    }
+    
+    final int indexForName(String name){
+        for(int v = 0; v < adjLists.length; v++){
+            if(adjLists[v].name.equals(name))
+                return v;
+        }
+        return -1;
+    } 
+    
+    public void print(){
+        System.out.println();
+        for (Vertex adjList : adjLists) {
+            System.out.print(adjList.name);
+            for (Neighbor nbr = adjList.adjList; nbr != null; nbr = nbr.next) {
+                System.out.print("-->" +adjLists[nbr.vertexnum].name);
+            }
+            System.out.println("\n");
+        }
+    }
+    
+    public static void main(String[] args) 
+    throws IOException{
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter graphs input file name: ");
+        String file = sc.nextLine();
+        Graphs_Java graph = new Graphs_Java(file);
+        graph.print();
+    }
+    
+}
